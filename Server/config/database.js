@@ -4,7 +4,8 @@ const User = require("../models/User");
 
 module.exports = () => {
     mongoose.connect('mongodb://localhost:27017/studentBooks', {
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useCreateIndex: true
     });
 
     const db = mongoose.connection;

@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 const encryption = require('../util/encryption');
 
 const userSchema = new Schema({
-    email: { type: Schema.Types.String, required: true },
+    email: { type: Schema.Types.String, required: true, unique: true },
     hashedPassword: { type: Schema.Types.String, required: true },
-    username: { type: Schema.Types.String, required: true },
+    username: { type: Schema.Types.String, required: true, unique: true },
     salt: { type: Schema.Types.String, required: true },
     roles: [ { type: Schema.Types.String } ]
 });
@@ -25,12 +25,12 @@ User.seedAdminUser = async () => {
         let users = await User.find();
         if (users.length > 0) return;
         const salt = encryption.generateSalt();
-        const hashedPass = encryption.generateHashedPassword(salt, '777');
+        const hashedPassword = encryption.generateHashedPassword(salt, '777');
         return User.create({
             email: "admin@admin.bg",
             username: "admin",
             salt,
-            hashedPass,
+            hashedPassword,
             roles: ["Admin"]
         });
     } catch (e) {
