@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-const User = require("../models/User");
 
 module.exports = () => {
     mongoose.connect('mongodb://localhost:27017/studentBooks', {
@@ -11,24 +10,16 @@ module.exports = () => {
     const db = mongoose.connection;
 
     db.once('open', err => {
-        if (err) {
-            console.log(err);
-        }
+        if (err) throw err;
 
-        User.seedAdminUser()
-            .then(() => {
-                console.log('Database ready');
-            })
-            .catch((reason) => {
-                console.log('Something went wrong');
-                console.log(reason);
-        });
+        console.log("Database ready")
     });
 
     db.on('error', reason => {
         console.log(reason);
     });
 
+    require("../models/User").seedAdminUser();
     require("../models/StudentBook");
     require("../models/List");
 };

@@ -1,11 +1,27 @@
 const express = require('express');
-const app = express();
-const port = 3000;
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-require('./config/database')();
-require("./config/passport")();
-require("./config/express")(app);
-require("./config/routs")(app);
+require('./database/database')();
+const userRoutes = require('./routes/users');
+const bookRoutes = require('./routes/books');
+const listRoutes = require('./routes/lists');
+const port = 9999;
+const app = express();
+
+app.use(cors());
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
+app.use('/users', userRoutes);
+app.use('/books', bookRoutes);
+app.use('/lists', listRoutes);
 
 // General error handling
 app.use((error, req, res, next) => {

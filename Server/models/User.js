@@ -4,8 +4,8 @@ const encryption = require('../util/encryption');
 
 const userSchema = new Schema({
     email: { type: Schema.Types.String, required: true, unique: true },
-    hashedPassword: { type: Schema.Types.String, required: true },
     username: { type: Schema.Types.String, required: true, unique: true },
+    hashedPassword: { type: Schema.Types.String, required: true },
     salt: { type: Schema.Types.String, required: true },
     roles: [ { type: Schema.Types.String } ]
 });
@@ -20,22 +20,23 @@ userSchema.method({
 
 const User = mongoose.model('User', userSchema);
 
-User.seedAdminUser = async () => {
-    try {
-        let users = await User.find();
-        if (users.length > 0) return;
-        const salt = encryption.generateSalt();
-        const hashedPassword = encryption.generateHashedPassword(salt, '777');
-        return User.create({
-            email: "admin@admin.bg",
-            username: "admin",
-            salt,
-            hashedPassword,
-            roles: ["Admin"]
-        });
-    } catch (e) {
-        console.log(e);
-    }
-};
-
 module.exports = User;
+
+module.exports.seedAdminUser = () => {
+    User.find({ username: "admin" })
+        .then((users) => {
+            if (users.length === 0) {
+                let salt = encryption.generateSalt();
+                let hashedPassword = encryption.generateHashedPassword(salt, "77777");
+
+                User.create({
+                    email: "admin@admin.bg",
+                    username: "admin",
+                    hashedPassword,
+                    salt,
+                    roles: ["Admin"]
+                });
+            }
+        })
+        .catch(err => console.log(err));
+};
