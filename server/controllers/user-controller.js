@@ -3,27 +3,24 @@ const jwt = require('jsonwebtoken');
 const encryption = require('../util/encryption');
 const User = require('mongoose').model('User');
 
-function validateUser(req, res) {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        res.status(422).json({
-            message: 'Validation failed, entered data is incorrect',
-            errors: errors.array()
-        });
-        return false;
-    }
-
-    return true;
-}
-
 module.exports = {
     register: (req, res, next) => {
+        const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+            return msg;
+        };
 
-        if (validateUser(req, res)) {
+        const errors = validationResult(req).formatWith(errorFormatter);
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                message: 'Validation failed, entered data is incorrect',
+                errors: errors.mapped()
+            });
+        } else {
             const {username, password, email} = req.body;
             const salt = encryption.generateSalt();
             const hashedPassword = encryption.generateHashedPassword(salt, password);
+
             User.create({
                 email,
                 hashedPassword,
@@ -54,7 +51,7 @@ module.exports = {
                 }
 
                 if (!user.authenticate(password)) {
-                    const error = new Error('A user with this email could not be found');
+                    const error = new Error('Incorrect password');
                     error.statusCode = 401;
                     throw error;
                 }
@@ -68,7 +65,7 @@ module.exports = {
 
                 res.status(200).json(
                     {
-                        message: 'User successfully logged in!',
+                        message: `Welcome, ${username}`,
                         token,
                         userId: user._id.toString(),
                         username: user.username,
@@ -82,6 +79,6 @@ module.exports = {
                 }
 
                 next(error);
-            })
+            });
     }
 };
