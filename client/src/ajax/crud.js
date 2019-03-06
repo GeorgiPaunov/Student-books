@@ -1,8 +1,14 @@
 function request(method) {
-    return async (url, data = {}) => {
+    return async (url, data, token) => {
+        const headers = { "content-type": "application/json" };
+
+        if (token) {
+            headers.Authorization = "Bearer " + token;
+        }
+
         const response = await fetch(url, {
             method,
-            headers: {"content-type": "application/json"},
+            headers,
             body: JSON.stringify(data)
         });
 

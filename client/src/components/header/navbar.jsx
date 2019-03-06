@@ -16,7 +16,7 @@ const NavBar = (props) => {
                                 props.isAdmin
                                     ?
                                     (<span>
-                                        <Link to="/create">Create</Link>
+                                        <Link to="/books/create">Create</Link>
                                      </span>)
                                     : null
                             }
@@ -24,8 +24,8 @@ const NavBar = (props) => {
                         </span>)
                         :
                         (<span>
-                            <Link to="/user/register">Register</Link>
-                            <Link to="/user/login">Login</Link>
+                            <Link to="/users/register">Register</Link>
+                            <Link to="/users/login">Login</Link>
                         </span>)
                 }
             </div>

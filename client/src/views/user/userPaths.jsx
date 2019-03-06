@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import Register from "./register/register";
 import Login from "./login/login";
 
-const User = (props) => {
+const UserPaths = (props) => {
     const { path } = props.match;
 
     return (
@@ -15,4 +15,4 @@ const User = (props) => {
     );
 };
 
-export default User;
+export default UserPaths;

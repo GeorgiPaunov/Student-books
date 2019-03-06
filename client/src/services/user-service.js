@@ -8,7 +8,6 @@ class UserService {
     }
 
     register(credentials) {
-        console.log(credentials);
         return post(this.registerUrl, credentials);
     }
 

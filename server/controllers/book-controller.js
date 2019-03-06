@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator/check");
 const Book = require("mongoose").model("StudentBook");
 
 module.exports = {
@@ -36,19 +37,32 @@ module.exports = {
             });
     },
     create: (req, res, next) => {
-        const bookObj = req.body;
+        const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+            return msg;
+        };
 
-        Book.create(bookObj)
-            .then((book) => {
-                res.status(201)
-                    .json({message: "Book created successfully!", book});
-            })
-            .catch((error) => {
-                if (!error.statusCode) {
-                    error.statusCode = 500;
-                }
-                next(error);
+        const errors = validationResult(req).formatWith(errorFormatter);
+        
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                message: 'Validation failed, entered data is incorrect',
+                errors: errors.mapped()
             });
+        } else {
+            const bookObj = req.body;
+
+            Book.create(bookObj)
+                .then((book) => {
+                    res.status(201)
+                        .json({message: "Book created successfully!", book});
+                })
+                .catch((error) => {
+                    if (!error.statusCode) {
+                        error.statusCode = 500;
+                    }
+                    next(error);
+                });
+        }
     },
     edit: (req, res, next) => {
         const id = req.params.id;

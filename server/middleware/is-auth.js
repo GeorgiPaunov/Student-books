@@ -48,7 +48,7 @@ module.exports.isAdmin = (req, res, next) => {
 
     if (!decodedToken) {
         return res.status(401)
-            .json({message: 'Not authenticated.'});
+            .json({message: 'You are not authenticated.'});
     }
 
     req.userId = decodedToken.userId;

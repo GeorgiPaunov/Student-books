@@ -4,13 +4,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import UserService from "./services/user-service";
+import BookService from "./services/book-service";
 
-import Header from "./components/header";
+import Header from "./components/header/header";
 import Home from "./views/home";
-import User from "./views/user/user";
+import UserPaths from "./views/user/userPaths";
 import notFound from "./views/not-found";
 
 import "./App.css";
+import BookPaths from "./views/book/bookPaths";
 
 class App extends Component {
     constructor(props) {
@@ -19,15 +21,18 @@ class App extends Component {
         this.state = {
             username: null,
             isAdmin: false,
-            books: []
+            books: [],
+            isLoading: true
         };
 
         this.registerUser = this.registerUser.bind(this);
         this.loginUser = this.loginUser.bind(this);
         this.logoutUser = this.logoutUser.bind(this);
+        this.createBook = this.createBook.bind(this);
     }
 
     static userService = new UserService();
+    static bookService = new BookService();
 
     registerUser(user) {
         App.userService.register(user)
@@ -37,7 +42,7 @@ class App extends Component {
                     this.loginUser(user);
                 } else {
                     if (data.errors) {
-                        Object.values(data.errors).forEach(err => toast.error(err));
+                        Object.values(data.errors).forEach(error => toast.error(error));
                     } else {
                         toast.error(data.message);
                     }
@@ -82,13 +87,37 @@ class App extends Component {
         });
     }
 
+    createBook(book) {
+        const token = localStorage.getItem("token");
+
+        App.bookService.create(book, token)
+            .then((data) => {
+                if (data.book) {
+                    toast.success(data.message);
+
+                    this.setState((prevState) => ({
+                        books: [...prevState.books, data.book]
+                    }));
+                } else {
+                    if (data.errors) {
+                        Object.values(data.errors).forEach(error => toast.error(error));
+                    } else {
+                        toast.error(data.message);
+                    }
+                }
+            })
+            .catch((error) => {
+                toast.error(error);
+            });
+    }
+
     componentWillMount() {
         const token = localStorage.getItem("token");
 
         if (token) {
             this.setState({
                 username: localStorage.getItem("username"),
-                isAdmin: !!localStorage.getItem("isAdmin")
+                isAdmin: JSON.parse(localStorage.getItem("isAdmin"))
             });
         } else {
             this.setState({
@@ -101,21 +130,42 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <ToastContainer autoClose={3000} closeButton={false} closeOnClick={true} hideProgressBar={true} pauseOnHover={true}/>
+                <ToastContainer autoClose={2000} closeButton={false} closeOnClick={true} hideProgressBar={true} pauseOnHover={true}/>
                 <BrowserRouter>
                     <Fragment>
                         <Header username={this.state.username} isAdmin={this.state.isAdmin} logoutUser={this.logoutUser}/>
                         <Switch>
-                            <Route path="/" exact render={(props) => <Home {...props}/>}/>
-                            <Route path="/user" render={(props) => this.state.username
+                            <Route path="/" exact render={(props) => this.state.isLoading
+                                ? <h2>Loading...</h2>
+                                : <Home {...props} books={this.state.books} username={this.state.username} isAdmin={this.state.isAdmin}/>
+                            }/>
+                            <Route path="/users" render={(props) => this.state.username
                                 ? <Redirect to="/"/>
-                                : <User {...props} registerUser={this.registerUser} loginUser={this.loginUser}/>}/>
+                                : <UserPaths {...props} registerUser={this.registerUser} loginUser={this.loginUser}/>
+                            }/>
+                            <Route path="/books" render={(props) => this.state.username
+                                ? <BookPaths {...props} isAdmin={this.state.isAdmin} createBook={this.createBook}/>
+                                : <Redirect to="/"/>
+                            }/>
                             <Route component={notFound}/>
                         </Switch>
                     </Fragment>
                 </BrowserRouter>
             </div>
         );
+    }
+
+    componentDidMount() {
+        App.bookService.getAllBooks()
+            .then((data) => {
+                this.setState({
+                    books: data.books,
+                    isLoading: false
+                });
+            })
+            .catch((err) => {
+                toast.error(err);
+            });
     }
 }
 

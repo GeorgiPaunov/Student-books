@@ -1,0 +1,46 @@
+.home {
+  text-align: center;
+}
+
+.home ul.books {
+  display: flex;
+  margin: 0 auto;
+  width: 50%;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.home li.book {
+  display: grid;
+}
+
+.home img {
+  text-align: center;
+  width: 400px;
+  height: 400px;
+  border: 2px solid rgb(221, 221, 221);
+  border-radius: 10px;
+}
+
+button{  
+  width: 90%;
+  margin:0 auto;
+  border: 2px solid dodgerblue;
+  text-align: center;  
+  font-size: 14px;
+  background: dodgerblue;
+  color: white;
+  border-radius: 7px;
+  margin-top: 20px; 
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.5); 
+  padding: 10px 20px;
+}
+
+button:hover{
+  color: dodgerblue;
+  background: transparent;
+}
+
+.inner {
+  display: inline-block;
+}
