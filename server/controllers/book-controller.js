@@ -81,7 +81,7 @@ module.exports = {
                 return book.save();
             })
             .then((savedBook) => {
-                res.statusCode(200)
+                res.status(200)
                     .json({ message: "Book edited successfully!", book: savedBook });
             })
             .catch((error) => {

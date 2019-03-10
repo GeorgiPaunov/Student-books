@@ -19,8 +19,8 @@ const validator = [
         .withMessage("Enter a valid subject!"),
     body("description")
         .trim()
-        .isLength({max: 300})
-        .withMessage("The description must be at most 300 symbols!"),
+        .isLength({max: 1000})
+        .withMessage("The description must be at most 1000 symbols!"),
     body("imageUrl")
         .trim()
         .not().isEmpty()
@@ -33,9 +33,9 @@ const validator = [
 ];
 
 router.get("/", bookController.getBooks);
-router.get("/details/:id", bookController.getDetails);
+router.get("/details/:id", auth.isAuthed, bookController.getDetails);
 router.post("/create", auth.isAdmin, validator, bookController.create);
-router.post("/edit/:id", auth.isAdmin, bookController.edit);
+router.put("/edit/:id", auth.isAdmin, bookController.edit);
 router.post("/delete/:id", auth.isAdmin, bookController.delete);
 
 module.exports = router;

@@ -1,0 +1,13 @@
+.content {
+    text-align: center;
+    width: 90%;
+    border-radius: 4px;
+    border: 2px solid greenyellow;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.content img {
+    margin-right: 15px;
+    float: left;
+}

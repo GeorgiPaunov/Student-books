@@ -1,18 +1,19 @@
 import React, { Component, Fragment } from "react";
-import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+import { Router, Switch, Route, Redirect } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import createBrowserHistory from "history/createBrowserHistory";
 
 import UserService from "./services/user-service";
 import BookService from "./services/book-service";
 
 import Header from "./components/header/header";
-import Home from "./views/home";
+import Home from "./views/home/home";
 import UserPaths from "./views/user/userPaths";
+import BookPaths from "./views/book/bookPaths";
 import notFound from "./views/not-found";
 
 import "./App.css";
-import BookPaths from "./views/book/bookPaths";
+import 'react-toastify/dist/ReactToastify.css';
 
 class App extends Component {
     constructor(props) {
@@ -22,13 +23,15 @@ class App extends Component {
             username: null,
             isAdmin: false,
             books: [],
-            isLoading: true
+            isLoading: true,
+            history: createBrowserHistory()
         };
 
         this.registerUser = this.registerUser.bind(this);
         this.loginUser = this.loginUser.bind(this);
         this.logoutUser = this.logoutUser.bind(this);
         this.createBook = this.createBook.bind(this);
+        this.editBook = this.editBook.bind(this);
     }
 
     static userService = new UserService();
@@ -98,12 +101,31 @@ class App extends Component {
                     this.setState((prevState) => ({
                         books: [...prevState.books, data.book]
                     }));
+
+                    this.state.history.push("/");
                 } else {
                     if (data.errors) {
                         Object.values(data.errors).forEach(error => toast.error(error));
                     } else {
                         toast.error(data.message);
                     }
+                }
+            })
+            .catch((error) => {
+                toast.error(error);
+            });
+    }
+
+    editBook(book, id) {
+        const token = localStorage.getItem("token");
+
+        App.bookService.edit(id, book, token)
+            .then((data) => {
+                if (data.book) {
+                    toast.success(data.message);
+                    this.state.history.push("/");
+                } else {
+                    toast.error(data.message);
                 }
             })
             .catch((error) => {
@@ -131,26 +153,34 @@ class App extends Component {
         return (
             <div className="App">
                 <ToastContainer autoClose={2000} closeButton={false} closeOnClick={true} hideProgressBar={true} pauseOnHover={true}/>
-                <BrowserRouter>
+                <Router history={this.state.history}>
                     <Fragment>
                         <Header username={this.state.username} isAdmin={this.state.isAdmin} logoutUser={this.logoutUser}/>
                         <Switch>
                             <Route path="/" exact render={(props) => this.state.isLoading
                                 ? <h2>Loading...</h2>
-                                : <Home {...props} books={this.state.books} username={this.state.username} isAdmin={this.state.isAdmin}/>
+                                : <Home {...props}
+                                        books={this.state.books}
+                                        username={this.state.username}
+                                        isAdmin={this.state.isAdmin}
+                                  />
                             }/>
                             <Route path="/users" render={(props) => this.state.username
                                 ? <Redirect to="/"/>
                                 : <UserPaths {...props} registerUser={this.registerUser} loginUser={this.loginUser}/>
                             }/>
                             <Route path="/books" render={(props) => this.state.username
-                                ? <BookPaths {...props} isAdmin={this.state.isAdmin} createBook={this.createBook}/>
+                                ? <BookPaths {...props}
+                                             isAdmin={this.state.isAdmin}
+                                             createBook={this.createBook}
+                                             editBook={this.editBook}
+                                  />
                                 : <Redirect to="/"/>
                             }/>
                             <Route component={notFound}/>
                         </Switch>
                     </Fragment>
-                </BrowserRouter>
+                </Router>
             </div>
         );
     }

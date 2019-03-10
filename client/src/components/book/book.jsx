@@ -1,6 +1,18 @@
 import React from "react";
 
 const Book = (props) => {
+    function getDetails(id) {
+        props.history.push(`/books/details/${id}`);
+    }
+
+    function getEdit(id) {
+        props.history.push(`/books/edit/${id}`);
+    }
+
+    function getDelete(id) {
+
+    }
+
     return (
         <li className="book">
             <h2>{props.title} {props.grade} grade</h2>
@@ -9,7 +21,7 @@ const Book = (props) => {
                 props.username
                     ? <span>
                         <div className="inner">
-                            <button>Details</button>
+                            <button onClick={() => getDetails(props._id)}>Details</button>
                         </div>
                         <div className="inner">
                             <button>Add</button>
@@ -21,10 +33,10 @@ const Book = (props) => {
                 props.isAdmin
                     ? <span>
                          <div className="inner">
-                            <button>Edit</button>
+                            <button onClick={() => getEdit(props._id)}>Edit</button>
                         </div>
                         <div className="inner">
-                            <button>Delete</button>
+                            <button onClick={() => getDelete(props._id)}>Delete</button>
                         </div>
                       </span>
                     : null

@@ -1,7 +1,7 @@
 import React from "react";
 import "./home.css";
 
-import Book from "../components/book/book";
+import Book from "../../components/book/book";
 
 const Home = (props) => {
     const books = props.books
@@ -16,6 +16,7 @@ const Home = (props) => {
                     <ul className="books">
                         {
                             books.map(book => <Book key={book._id}
+                                {...props}
                                 username={props.username}
                                 isAdmin={props.isAdmin}
                                 {...book}

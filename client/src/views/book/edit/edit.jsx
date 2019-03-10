@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { toast } from "react-toastify";
+import BookService from "../../../services/book-service";
 import '../form.css';
 
-class Create extends Component {
+class Edit extends Component {
     constructor (props) {
         super(props);
 
@@ -21,6 +23,8 @@ class Create extends Component {
         this.handleForm = this.handleForm.bind(this);
     }
 
+    static service = new BookService();
+
     handleChange(evt) {
         const {value, id} = evt.target;
 
@@ -31,13 +35,15 @@ class Create extends Component {
 
     handleForm(evt) {
         evt.preventDefault();
-        this.props.createBook(this.state);
+        const id = this.props.match.params.id;
+
+        this.props.editBook(this.state, id);
     }
 
     render() {
         return (
             <div className="create">
-                <h1>Create Student Book</h1>
+                <h1>Edit Student Book</h1>
                 <form onSubmit={this.handleForm}>
                     <label htmlFor="title">Title</label>
                     <input
@@ -106,11 +112,40 @@ class Create extends Component {
                     <label htmlFor="description">Description</label>
                     <textarea id="description" onChange={this.handleChange} value={this.state.description}/>
 
-                    <button type="submit">Create</button>
+                    <button type="submit">Edit</button>
                 </form>
             </div>
         );
     }
+
+    componentDidMount() {
+        const id = this.props.match.params.id;
+        const token = localStorage.getItem("token");
+
+        Edit.service.getDetails(id, token)
+            .then((data) => {
+                if (data.book) {
+                    this.setState({
+                        title: data.book.title,
+                        grade: data.book.grade,
+                        subject: data.book.subject,
+                        author: data.book.author,
+                        publisher: data.book.publisher,
+                        year: data.book.year,
+                        description: data.book.description,
+                        imageUrl: data.book.imageUrl,
+                        price: data.book.price,
+                    });
+                } else {
+                    //this.props.history.push("/");
+                    toast.error(data.message);
+                }
+            })
+            .catch((error) => {
+                this.props.history.push("/");
+                toast.error(error);
+            });
+    }
 }
 
-export default Create;
+export default Edit;
