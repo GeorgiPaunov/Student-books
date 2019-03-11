@@ -1,5 +1,5 @@
 function request(method) {
-    return async (url, data, token) => {
+    return async (url, token, data) => {
         const headers = { "content-type": "application/json" };
 
         if (token) {

@@ -19,6 +19,7 @@ const Home = (props) => {
                                 {...props}
                                 username={props.username}
                                 isAdmin={props.isAdmin}
+                                getDetails={props.getDetails}
                                 {...book}
                             />)
                         }

@@ -1,4 +1,4 @@
-import { get, post, update } from "../ajax/crud";
+import { get, post, update, remove } from "../ajax/crud";
 
 class BookService {
     constructor() {
@@ -7,6 +7,7 @@ class BookService {
         this.getDetailsUrl = `${this.baseUrl}/details/`;
         this.createBookUrl = `${this.baseUrl}/create`;
         this.editBookUrl = `${this.baseUrl}/edit/`;
+        this.deleteBookUrl = `${this.baseUrl}/delete/`;
     }
 
     getAllBooks() {
@@ -14,15 +15,19 @@ class BookService {
     }
 
     getDetails(id, token) {
-        return get(this.getDetailsUrl + id, undefined, token);
+        return get(this.getDetailsUrl + id, token);
     }
 
     create(book, token) {
-        return post(this.createBookUrl, book, token);
+        return post(this.createBookUrl, token, book);
     }
 
     edit(id, book, token) {
-        return update(this.editBookUrl + id, book, token);
+        return update(this.editBookUrl + id, token, book);
+    }
+
+    delete(id, token) {
+        return remove(this.deleteBookUrl + id, token);
     }
 }
 

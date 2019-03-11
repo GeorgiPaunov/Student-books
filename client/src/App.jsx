@@ -24,6 +24,7 @@ class App extends Component {
             isAdmin: false,
             books: [],
             isLoading: true,
+            wantedBook: {},
             history: createBrowserHistory()
         };
 
@@ -31,7 +32,9 @@ class App extends Component {
         this.loginUser = this.loginUser.bind(this);
         this.logoutUser = this.logoutUser.bind(this);
         this.createBook = this.createBook.bind(this);
+        this.getDetails = this.getDetails.bind(this);
         this.editBook = this.editBook.bind(this);
+        this.deleteBook = this.deleteBook.bind(this);
     }
 
     static userService = new UserService();
@@ -90,6 +93,19 @@ class App extends Component {
         });
     }
 
+    getAllBooks() {
+        App.bookService.getAllBooks()
+            .then((data) => {
+                this.setState({
+                    books: data.books,
+                    isLoading: false
+                });
+            })
+            .catch((err) => {
+                toast.error(err);
+            });
+    }
+
     createBook(book) {
         const token = localStorage.getItem("token");
 
@@ -116,6 +132,28 @@ class App extends Component {
             });
     }
 
+    getDetails(id, path) {
+        const token = localStorage.getItem("token");
+
+        App.bookService.getDetails(id, token)
+            .then((data) => {
+                if (data.book) {
+                    this.setState({
+                        wantedBook: data.book
+                    });
+
+                    this.state.history.push(`/books/${path}/${id}`);
+                } else {
+                    this.state.history.push("/");
+                    toast.error(data.message);
+                }
+            })
+            .catch((error) => {
+                this.state.history.push("/");
+                toast.error(error);
+            });
+    }
+
     editBook(book, id) {
         const token = localStorage.getItem("token");
 
@@ -124,6 +162,25 @@ class App extends Component {
                 if (data.book) {
                     toast.success(data.message);
                     this.state.history.push("/");
+                    this.getAllBooks();
+                } else {
+                    toast.error(data.message);
+                }
+            })
+            .catch((error) => {
+                toast.error(error);
+            });
+    }
+
+    deleteBook(id) {
+        const token = localStorage.getItem("token");
+
+        App.bookService.delete(id, token)
+            .then((data) => {
+                if (data.book) {
+                    toast.success(data.message);
+                    this.state.history.push("/");
+                    this.getAllBooks();
                 } else {
                     toast.error(data.message);
                 }
@@ -163,6 +220,7 @@ class App extends Component {
                                         books={this.state.books}
                                         username={this.state.username}
                                         isAdmin={this.state.isAdmin}
+                                        getDetails={this.getDetails}
                                   />
                             }/>
                             <Route path="/users" render={(props) => this.state.username
@@ -173,7 +231,9 @@ class App extends Component {
                                 ? <BookPaths {...props}
                                              isAdmin={this.state.isAdmin}
                                              createBook={this.createBook}
+                                             book={this.state.wantedBook}
                                              editBook={this.editBook}
+                                             deleteBook={this.deleteBook}
                                   />
                                 : <Redirect to="/"/>
                             }/>
@@ -186,16 +246,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        App.bookService.getAllBooks()
-            .then((data) => {
-                this.setState({
-                    books: data.books,
-                    isLoading: false
-                });
-            })
-            .catch((err) => {
-                toast.error(err);
-            });
+        this.getAllBooks();
     }
 }
 

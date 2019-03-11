@@ -17,6 +17,10 @@ const validator = [
         .trim()
         .not().isEmpty()
         .withMessage("Enter a valid subject!"),
+    body("publisher")
+        .trim()
+        .not().isEmpty()
+        .withMessage("Enter a valid publisher!"),
     body("description")
         .trim()
         .isLength({max: 1000})
@@ -35,7 +39,7 @@ const validator = [
 router.get("/", bookController.getBooks);
 router.get("/details/:id", auth.isAuthed, bookController.getDetails);
 router.post("/create", auth.isAdmin, validator, bookController.create);
-router.put("/edit/:id", auth.isAdmin, bookController.edit);
-router.post("/delete/:id", auth.isAdmin, bookController.delete);
+router.put("/edit/:id", auth.isAdmin, validator, bookController.edit);
+router.delete("/delete/:id", auth.isAdmin, bookController.delete);
 
 module.exports = router;

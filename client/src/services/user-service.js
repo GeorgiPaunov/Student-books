@@ -8,11 +8,11 @@ class UserService {
     }
 
     register(credentials) {
-        return post(this.registerUrl, credentials);
+        return post(this.registerUrl, undefined, credentials);
     }
 
     login(credentials) {
-        return post(this.loginUrl, credentials);
+        return post(this.loginUrl, undefined, credentials);
     }
 }
 

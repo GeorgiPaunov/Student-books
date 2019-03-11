@@ -65,31 +65,44 @@ module.exports = {
         }
     },
     edit: (req, res, next) => {
-        const id = req.params.id;
+        const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+            return msg;
+        };
 
-        Book.findById(id)
-            .then((book) => {
-                if (!book) {
-                    const error = new Error("Such book doesn't exist!");
-                    error.statusCode = 404;
-                    throw error;
-                }
+        const errors = validationResult(req).formatWith(errorFormatter);
 
-                const bookObj = req.body;
-                book = Object.assign(book, bookObj);
-
-                return book.save();
-            })
-            .then((savedBook) => {
-                res.status(200)
-                    .json({ message: "Book edited successfully!", book: savedBook });
-            })
-            .catch((error) => {
-                if (!error.statusCode) {
-                    error.statusCode = 500;
-                }
-                next(error);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                message: 'Validation failed, entered data is incorrect',
+                errors: errors.mapped()
             });
+        } else {
+            const id = req.params.id;
+
+            Book.findById(id)
+                .then((book) => {
+                    if (!book) {
+                        const error = new Error("Such book doesn't exist!");
+                        error.statusCode = 404;
+                        throw error;
+                    }
+
+                    const bookObj = req.body;
+                    book = Object.assign(book, bookObj);
+
+                    return book.save();
+                })
+                .then((savedBook) => {
+                    res.status(200)
+                        .json({message: "Book edited successfully!", book: savedBook});
+                })
+                .catch((error) => {
+                    if (!error.statusCode) {
+                        error.statusCode = 500;
+                    }
+                    next(error);
+                });
+        }
     },
     delete: (req, res, next) => {
         const id = req.params.id;
@@ -102,11 +115,11 @@ module.exports = {
                     throw error;
                 }
 
-                return Book.deleteOne({id: book._id});
+                return Book.deleteOne({ _id: book._id });
             })
-            .then(() => {
-                res.statusCode(200)
-                    .json({ message: "Book deleted successfully!" });
+            .then((deletedBook) => {
+                res.status(200)
+                    .json({ message: "Book deleted successfully!", book: deletedBook });
             })
             .catch((error) => {
                 if (!error.statusCode) {

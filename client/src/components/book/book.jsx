@@ -2,20 +2,21 @@ import React from "react";
 
 const Book = (props) => {
     function getDetails(id) {
-        props.history.push(`/books/details/${id}`);
+        props.getDetails(id, "details");
     }
 
     function getEdit(id) {
-        props.history.push(`/books/edit/${id}`);
+        props.getDetails(id, "edit");
     }
 
     function getDelete(id) {
-
+        props.getDetails(id, "delete");
     }
 
     return (
         <li className="book">
-            <h2>{props.title} {props.grade} grade</h2>
+            <h2>{props.title}</h2>
+            <h2>{props.grade} grade</h2>
             <img src={props.imageUrl} alt=""/>
             {
                 props.username

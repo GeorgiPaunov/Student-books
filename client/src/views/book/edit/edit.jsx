@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { toast } from "react-toastify";
-import BookService from "../../../services/book-service";
 import '../form.css';
 
 class Edit extends Component {
@@ -8,22 +7,20 @@ class Edit extends Component {
         super(props);
 
         this.state = {
-            title: "",
-            grade: "",
-            subject: "",
-            author: "",
-            publisher: "",
-            year: "",
-            description: "",
-            imageUrl: "",
-            price: "",
+            title: this.props.book.title,
+            grade: this.props.book.grade,
+            subject: this.props.book.subject,
+            author: this.props.book.author,
+            publisher: this.props.book.publisher,
+            year: this.props.book.year,
+            description: this.props.book.description,
+            imageUrl: this.props.book.imageUrl,
+            price: this.props.book.price,
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleForm = this.handleForm.bind(this);
     }
-
-    static service = new BookService();
 
     handleChange(evt) {
         const {value, id} = evt.target;
@@ -41,6 +38,11 @@ class Edit extends Component {
     }
 
     render() {
+        if (!this.state.title) {
+            this.props.history.push("/");
+            toast.error("Such book doesn't exist!");
+        }
+
         return (
             <div className="create">
                 <h1>Edit Student Book</h1>
@@ -116,35 +118,6 @@ class Edit extends Component {
                 </form>
             </div>
         );
-    }
-
-    componentDidMount() {
-        const id = this.props.match.params.id;
-        const token = localStorage.getItem("token");
-
-        Edit.service.getDetails(id, token)
-            .then((data) => {
-                if (data.book) {
-                    this.setState({
-                        title: data.book.title,
-                        grade: data.book.grade,
-                        subject: data.book.subject,
-                        author: data.book.author,
-                        publisher: data.book.publisher,
-                        year: data.book.year,
-                        description: data.book.description,
-                        imageUrl: data.book.imageUrl,
-                        price: data.book.price,
-                    });
-                } else {
-                    //this.props.history.push("/");
-                    toast.error(data.message);
-                }
-            })
-            .catch((error) => {
-                this.props.history.push("/");
-                toast.error(error);
-            });
     }
 }
 

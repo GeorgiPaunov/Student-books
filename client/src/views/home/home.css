@@ -4,20 +4,23 @@
 
 .home ul.books {
   display: flex;
-  margin: 0 auto;
-  width: 50%;
+  margin: 0 0 30px 0;
+  width: 90%;
   justify-content: space-evenly;
   flex-wrap: wrap;
 }
 
 .home li.book {
-  display: grid;
+  display: inline-block;
+  width: 30%;
+  margin: 5px 0 5px;
+  background-color: #f1f1f1;
 }
 
 .home img {
   text-align: center;
-  width: 400px;
-  height: 400px;
+  width: 100%;
+  height: 370px;
   border: 2px solid rgb(221, 221, 221);
   border-radius: 10px;
 }
