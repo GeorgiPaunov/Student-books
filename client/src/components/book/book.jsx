@@ -25,7 +25,7 @@ const Book = (props) => {
                             <button onClick={() => getDetails(props._id)}>Details</button>
                         </div>
                         <div className="inner">
-                            <button>Add</button>
+                            <button onClick={() => props.giveDistributionInfo(props._id)}>Add</button>
                         </div>
                       </span>
                     : null

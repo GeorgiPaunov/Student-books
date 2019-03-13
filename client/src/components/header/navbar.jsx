@@ -11,15 +11,16 @@ const NavBar = (props) => {
                     props.username
                         ?
                         (<span>
-                            <Link to="#">Welcome, {props.username}!</Link>
                             {
                                 props.isAdmin
                                     ?
                                     (<span>
-                                        <Link to="/books/create">Create</Link>
+                                        <Link to="/books/create">Create book</Link>
                                      </span>)
                                     : null
                             }
+                            <Link to="/lists/myLists">{props.username}'s lists</Link>
+                            <Link to="/lists/create">Create list</Link>
                             <Link to="#" onClick={props.logoutUser}>Logout</Link>
                         </span>)
                         :

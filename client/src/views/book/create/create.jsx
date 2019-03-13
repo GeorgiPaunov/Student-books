@@ -98,6 +98,7 @@ class Create extends Component {
                     <label htmlFor="price">Price</label>
                     <input
                         type="number"
+                        step="0.1"
                         id="price"
                         value={this.state.price}
                         onChange={this.handleChange}

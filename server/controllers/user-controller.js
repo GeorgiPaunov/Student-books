@@ -65,7 +65,7 @@ module.exports = {
 
                 res.status(200).json(
                     {
-                        message: `Welcome, ${username}`,
+                        message: `Welcome, ${username}!`,
                         token,
                         userId: user._id.toString(),
                         username: user.username,

@@ -14,6 +14,7 @@
   display: inline-block;
   width: 30%;
   margin: 5px 0 5px;
+  border-radius: 4px;
   background-color: #f1f1f1;
 }
 
@@ -25,7 +26,7 @@
   border-radius: 10px;
 }
 
-button{  
+button {
   width: 90%;
   margin:0 auto;
   border: 2px solid dodgerblue;
@@ -39,7 +40,7 @@ button{
   padding: 10px 20px;
 }
 
-button:hover{
+button:hover {
   color: dodgerblue;
   background: transparent;
 }

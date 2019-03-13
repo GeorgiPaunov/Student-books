@@ -8,8 +8,6 @@ import Delete from "./delete/delete";
 
 const BookPaths = (properties) => {
     const { path } = properties.match;
-    //const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
-    //const { editBook } = props;
 
     return (
         <Switch>
