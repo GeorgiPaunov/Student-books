@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import "../form.css";
 
 const Delete = (props) => {
-    if (!props.book.title) {
+    const id = props.match.params.id;
+    const book = props.books.filter(b => b._id.toString() === id).pop();
+
+    if (!book) {
         props.history.push("/");
         toast.error("Such book doesn't exist!");
         return null;
@@ -11,7 +14,6 @@ const Delete = (props) => {
 
     function handleSubmit(evt) {
         evt.preventDefault();
-        const id = props.match.params.id;
 
         props.deleteBook(id);
     }
@@ -24,7 +26,7 @@ const Delete = (props) => {
                 <input
                     type="text"
                     id="title"
-                    value={props.book.title}
+                    value={book.title}
                     disabled
                 />
 
@@ -32,7 +34,7 @@ const Delete = (props) => {
                 <input
                     type="number"
                     id="grade"
-                    value={props.book.grade}
+                    value={book.grade}
                     disabled
                 />
 
@@ -40,7 +42,7 @@ const Delete = (props) => {
                 <input
                     type="text"
                     id="subject"
-                    value={props.book.subject}
+                    value={book.subject}
                     disabled
                 />
 
@@ -48,7 +50,7 @@ const Delete = (props) => {
                 <input
                     type="text"
                     id="author"
-                    value={props.book.author}
+                    value={book.author}
                     disabled
                 />
 
@@ -56,7 +58,7 @@ const Delete = (props) => {
                 <input
                     type="text"
                     id="publisher"
-                    value={props.book.publisher}
+                    value={book.publisher}
                     disabled
                 />
 
@@ -64,7 +66,7 @@ const Delete = (props) => {
                 <input
                     type="number"
                     id="year"
-                    value={props.book.year}
+                    value={book.year}
                     disabled
                 />
 
@@ -72,22 +74,23 @@ const Delete = (props) => {
                 <input
                     type="text"
                     id="imageUrl"
-                    value={props.book.imageUrl}
+                    value={book.imageUrl}
                     disabled
                 />
 
                 <label htmlFor="price">Price</label>
                 <input
                     type="number"
+                    step="0.1"
                     id="price"
-                    value={props.book.price}
+                    value={book.price}
                     disabled
                 />
 
                 <label htmlFor="description">Description</label>
                 <textarea
                     id="description"
-                    value={props.book.description}
+                    value={book.description}
                     disabled
                 />
 

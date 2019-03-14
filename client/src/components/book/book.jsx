@@ -2,15 +2,15 @@ import React from "react";
 
 const Book = (props) => {
     function getDetails(id) {
-        props.getDetails(id, "details");
+        props.history.push(`/books/details/${id}`);
     }
 
     function getEdit(id) {
-        props.getDetails(id, "edit");
+        props.history.push(`/books/edit/${id}`);
     }
 
     function getDelete(id) {
-        props.getDetails(id, "delete");
+        props.history.push(`/books/delete/${id}`);
     }
 
     return (

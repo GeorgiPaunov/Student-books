@@ -24,11 +24,10 @@ class App extends Component {
         this.state = {
             username: null,
             isAdmin: false,
-            isLoading: true,
+            booksLoading: true,
+            listsLoading: true,
             books: [],
-            wantedBook: {},
             usersLists: [],
-            wantedList: {},
             history: createBrowserHistory()
         };
 
@@ -36,11 +35,9 @@ class App extends Component {
         this.loginUser = this.loginUser.bind(this);
         this.logoutUser = this.logoutUser.bind(this);
         this.createBook = this.createBook.bind(this);
-        this.getBookDetails = this.getBookDetails.bind(this);
         this.editBook = this.editBook.bind(this);
         this.deleteBook = this.deleteBook.bind(this);
         this.createList = this.createList.bind(this);
-        this.getListDetails = this.getListDetails.bind(this);
         this.deleteList = this.deleteList.bind(this);
         this.addToList = this.addToList.bind(this);
         this.removeFromList = this.removeFromList.bind(this);
@@ -73,9 +70,9 @@ class App extends Component {
         App.userService.login(user)
             .then((data) => {
                 if (data.username) {
-                    localStorage.setItem("token", data.token);
-                    localStorage.setItem("username", data.username);
-                    localStorage.setItem("isAdmin", data.isAdmin);
+                    sessionStorage.setItem("token", data.token);
+                    sessionStorage.setItem("username", data.username);
+                    sessionStorage.setItem("isAdmin", data.isAdmin);
 
                     toast.success(data.message);
 
@@ -95,7 +92,7 @@ class App extends Component {
     }
 
     logoutUser() {
-        localStorage.clear();
+        sessionStorage.clear();
 
         toast.success(`Goodbye, ${this.state.username}!`);
 
@@ -111,7 +108,7 @@ class App extends Component {
             .then((data) => {
                 this.setState({
                     books: data.books,
-                    isLoading: false
+                    booksLoading: false
                 });
             })
             .catch((err) => {
@@ -120,7 +117,7 @@ class App extends Component {
     }
 
     createBook(book) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         App.bookService.create(book, token)
             .then((data) => {
@@ -145,30 +142,8 @@ class App extends Component {
             });
     }
 
-    getBookDetails(id, path) {
-        const token = localStorage.getItem("token");
-
-        App.bookService.getDetails(id, token)
-            .then((data) => {
-                if (data.book) {
-                    this.setState({
-                        wantedBook: data.book
-                    });
-
-                    this.state.history.push(`/books/${path}/${id}`);
-                } else {
-                    this.state.history.push("/");
-                    toast.error(data.message);
-                }
-            })
-            .catch((error) => {
-                this.state.history.push("/");
-                toast.error(error);
-            });
-    }
-
     editBook(book, id) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         App.bookService.edit(id, token, book)
             .then((data) => {
@@ -186,7 +161,7 @@ class App extends Component {
     }
 
     deleteBook(id) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         App.bookService.delete(id, token)
             .then((data) => {
@@ -204,7 +179,7 @@ class App extends Component {
     }
 
     createList(list) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         App.listService.create(token, list)
             .then((data) => {
@@ -230,45 +205,29 @@ class App extends Component {
     }
 
     getMyLists() {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         App.listService.getMyLists(token)
             .then((data) => {
                 if (data.lists.length) {
                     this.setState({
-                        usersLists: data.lists
+                        usersLists: data.lists,
+                        listsLoading: false
                     });
-                }
-            })
-            .catch((error) => {
-                toast.error(error);
-            });
-    }
-
-    getListDetails(id) {
-        const token = localStorage.getItem("token");
-
-        App.listService.getDetails(id, token)
-            .then((data) => {
-                if (data.list) {
+                } else if (this.state.usersLists.length > 0) {
                     this.setState({
-                        wantedList: data.list
+                        usersLists: [],
+                        listsLoading: false
                     });
-
-                    this.state.history.push(`/lists/details/${id}`);
-                } else {
-                    this.state.history.push("/");
-                    toast.error(data.message);
                 }
             })
             .catch((error) => {
-                this.state.history.push("/");
                 toast.error(error);
             });
     }
 
     deleteList(id) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         App.listService.delete(id, token)
             .then((data) => {
@@ -288,10 +247,10 @@ class App extends Component {
         if (!listId) {
             toast.error("Select a valid list!");
         } else {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const data = { listId, bookId };
 
-            App.listService.distributeBookToList(token, data)
+            App.listService.addBookToList(token, data)
                 .then((data) => {
                     if (data.list) {
                         toast.success(data.message);
@@ -306,16 +265,15 @@ class App extends Component {
         }
     }
 
-    removeFromList(bookId) {
-        const token = localStorage.getItem("token");
-        const listId = this.state.wantedList._id;
+    removeFromList(listId, bookId) {
+        const token = sessionStorage.getItem("token");
         const data = { listId, bookId };
 
-        App.listService.displaceBookFromList(token, data)
+        App.listService.removeBookFromList(token, data)
             .then((data) => {
                 if (data.list) {
                     toast.success(data.message);
-                    this.getListDetails(listId);
+                    this.getMyLists();
                 } else {
                     toast.error(data.message);
                 }
@@ -326,12 +284,12 @@ class App extends Component {
     }
 
     componentWillMount() {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         if (token) {
             this.setState({
-                username: localStorage.getItem("username"),
-                isAdmin: JSON.parse(localStorage.getItem("isAdmin"))
+                username: sessionStorage.getItem("username"),
+                isAdmin: JSON.parse(sessionStorage.getItem("isAdmin"))
             });
         } else {
             this.setState({
@@ -349,14 +307,13 @@ class App extends Component {
                     <Fragment>
                         <Header username={this.state.username} isAdmin={this.state.isAdmin} logoutUser={this.logoutUser}/>
                         <Switch>
-                            <Route path="/" exact render={(props) => this.state.isLoading
+                            <Route path="/" exact render={(props) => this.state.booksLoading
                                 ? <h2>Loading...</h2>
                                 : <Home {...props}
                                       lists={this.state.usersLists}
                                       books={this.state.books}
                                       username={this.state.username}
                                       isAdmin={this.state.isAdmin}
-                                      getDetails={this.getBookDetails}
                                       addToList={this.addToList}
                                   />
                             }/>
@@ -367,23 +324,25 @@ class App extends Component {
                                       loginUser={this.loginUser}
                                   />
                             }/>
-                            <Route path="/books" render={(props) => this.state.username
+                            <Route path="/books" render={(props) => this.state.booksLoading
+                                ? <h2>Loading...</h2>
+                                : this.state.username
                                 ? <BookPaths {...props}
                                       isAdmin={this.state.isAdmin}
-                                      book={this.state.wantedBook}
+                                      books={this.state.books}
                                       createBook={this.createBook}
                                       editBook={this.editBook}
                                       deleteBook={this.deleteBook}
                                   />
                                 : <Redirect to="/"/>
                             }/>
-                            <Route path="/lists" render={(props) => this.state.username
+                            <Route path="/lists" render={(props) => this.state.listsLoading
+                                ? <h2>Loading...</h2>
+                                : this.state.username
                                 ? <ListPaths {...props}
                                       lists={this.state.usersLists}
-                                      list={this.state.wantedList}
                                       createList={this.createList}
                                       deleteList={this.deleteList}
-                                      getDetails={this.getListDetails}
                                       removeFromList={this.removeFromList}
                                   />
                                 : <Redirect to="/"/>
@@ -397,8 +356,8 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.getAllBooks();
         this.getMyLists();
+        this.getAllBooks();
     }
 }
 

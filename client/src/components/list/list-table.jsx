@@ -1,7 +1,11 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
-const ListTable = ({ lists, deleteList, getDetails }) => {
+const ListTable = (props) => {
+    function getDetails(id) {
+        props.history.push(`/lists/details/${id}`);
+    }
+
     return (
         <table align="center">
             <tbody>
@@ -12,7 +16,7 @@ const ListTable = ({ lists, deleteList, getDetails }) => {
                 <th width="20%">Delete</th>
             </tr>
             {
-                lists.sort((a, b) => a.title.localeCompare(b.title))
+                props.lists.sort((a, b) => a.title.localeCompare(b.title))
                     .map(list => (
                         <tr key={list._id}>
                             <td className="name">
@@ -27,7 +31,7 @@ const ListTable = ({ lists, deleteList, getDetails }) => {
                                     : <td className="middle">0 lv.</td>
                             }
                             <td>
-                                <button onClick={() => deleteList(list._id)}>Delete</button>
+                                <button onClick={() => props.deleteList(list._id)}>Delete</button>
                             </td>
                         </tr>
                     )

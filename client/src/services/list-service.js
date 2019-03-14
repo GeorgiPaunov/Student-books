@@ -27,11 +27,11 @@ class ListService {
         return remove(this.deleteListUrl + id, token);
     }
 
-    distributeBookToList(token, data) {
+    addBookToList(token, data) {
         return update(this.addUrl, token, data);
     }
 
-    displaceBookFromList(token, data) {
+    removeBookFromList(token, data) {
         return update(this.removeUrl, token, data);
     }
 }

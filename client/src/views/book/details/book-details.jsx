@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import "./book-details.css";
 
 const BookDetails = (props) => {
-    if (!props.book.title) {
+    const id = props.match.params.id;
+    const book = props.books.filter(b => b._id.toString() === id).pop();
+
+    if (!book) {
         props.history.push("/");
         toast.error("Such book doesn't exist!");
         return null;
@@ -11,13 +14,13 @@ const BookDetails = (props) => {
 
     return (
         <div className="content">
-            <img src={props.book.imageUrl} alt="book"/>
-            <h1>{props.book.title} {props.book.grade} grade</h1>
-            <h4>Author: {props.book.author}</h4>
-            <h3>Subject: {props.book.subject}</h3>
-            <span>{props.book.description}</span>
-            <h4>{props.book.publisher} {props.book.year}</h4>
-            <h2>Price: {props.book.price.toFixed(2)} lv.</h2>
+            <img src={book.imageUrl} alt="book"/>
+            <h1>{book.title} {book.grade} grade</h1>
+            <h4>Author: {book.author}</h4>
+            <h3>Subject: {book.subject}</h3>
+            <span>{book.description}</span>
+            <h4>{book.publisher} {book.year}</h4>
+            <h2>Price: {book.price.toFixed(2)} lv.</h2>
         </div>
     );
 };

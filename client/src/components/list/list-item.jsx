@@ -1,6 +1,8 @@
 import React from "react";
 
 const ListItem = (props) => {
+    const listId = props.match.params.id;
+
     return (
         <li className="item">
             <img src={props.imageUrl} alt="book"/>
@@ -9,7 +11,7 @@ const ListItem = (props) => {
             <h4>{props.publisher}</h4>
             <h4>{props.year}</h4>
             <h2>Price: {props.price.toFixed(2)} lv.</h2>
-            <button onClick={() => props.removeFromList(props._id)}>Remove</button>
+            <button onClick={() => props.removeFromList(listId, props._id)}>Remove</button>
         </li>
     );
 };

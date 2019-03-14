@@ -11,17 +11,17 @@ const BookPaths = (properties) => {
 
     return (
         <Switch>
-            <Route path={`${path}/details/:id`} render={(props) => <BookDetails book={properties.book} {...props}/>}/>
+            <Route path={`${path}/details/:id`} render={(props) => <BookDetails books={properties.books} {...props}/>}/>
             <Route path={`${path}/create`} render={(props) => properties.isAdmin
                 ? <Create {...props} createBook={properties.createBook}/>
                 : <Redirect to="/"/>
             }/>
             <Route path={`${path}/edit/:id`} render={(props) => properties.isAdmin
-                ? <Edit {...props} book={properties.book} editBook={properties.editBook}/>
+                ? <Edit {...props} books={properties.books} editBook={properties.editBook}/>
                 : <Redirect to="/"/>
             }/>
             <Route path={`${path}/delete/:id`} render={(props) => properties.isAdmin
-                ? <Delete {...props} book={properties.book} deleteBook={properties.deleteBook}/>
+                ? <Delete {...props} books={properties.books} deleteBook={properties.deleteBook}/>
                 : <Redirect to="/"/>
             }/>
         </Switch>

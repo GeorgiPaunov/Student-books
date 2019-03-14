@@ -22,7 +22,7 @@ const Home = (props) => {
             a.grade - b.grade ||
             a.subject.localeCompare(b.subject) ||
             a.publisher.localeCompare(b.publisher
-            )));
+        )));
 
     return (
         <div className="home">
