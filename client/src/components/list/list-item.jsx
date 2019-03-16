@@ -4,14 +4,44 @@ const ListItem = (props) => {
     const listId = props.match.params.id;
 
     return (
-        <li className="item">
-            <img src={props.imageUrl} alt="book"/>
-            <h1>{props.title} {props.grade} grade</h1>
-            <h4>Author: {props.author}</h4>
-            <h4>{props.publisher}</h4>
-            <h4>{props.year}</h4>
-            <h2>Price: {props.price.toFixed(2)} lv.</h2>
-            <button onClick={() => props.removeFromList(listId, props._id)}>Remove</button>
+        <li>
+            <div className="item">
+                <div className="item-image">
+                    <img src={props.imageUrl} alt="book"/>
+                </div>
+                <div className="item-table">
+                    <table align="left">
+                        <tbody>
+                            <tr>
+                                <th>Title</th>
+                                <td>{props.title}</td>
+                            </tr>
+                            <tr>
+                                <th>Grade</th>
+                                <td>{props.grade}</td>
+                            </tr>
+                            <tr>
+                                <th>Author</th>
+                                <td>{props.author}</td>
+                            </tr>
+                            <tr>
+                                <th>Publisher</th>
+                                <td>{props.publisher}</td>
+                            </tr>
+                            <tr>
+                                <th>Year</th>
+                                <td>{props.year}</td>
+                            </tr>
+                            <tr>
+                                <th>Price</th>
+                                <td>{props.price.toFixed(2)} lv.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button className="item-btn" id="delete" onClick={() => props.removeFromList(listId, props._id)}>Remove</button>
+            </div>
+            <hr/>
         </li>
     );
 };

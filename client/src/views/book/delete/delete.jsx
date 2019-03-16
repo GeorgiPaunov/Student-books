@@ -94,7 +94,7 @@ const Delete = (props) => {
                     disabled
                 />
 
-                <button type="submit">Delete</button>
+                <button id="delete" type="submit">Delete</button>
             </form>
         </div>
     );

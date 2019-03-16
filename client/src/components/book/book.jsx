@@ -16,7 +16,7 @@ const Book = (props) => {
     return (
         <li className="book">
             <h2>{props.title}</h2>
-            <h2>{props.grade} grade</h2>
+            <h2>{props.grade}. grade</h2>
             <img src={props.imageUrl} alt=""/>
             {
                 props.username
@@ -34,10 +34,10 @@ const Book = (props) => {
                 props.isAdmin
                     ? <span>
                          <div className="inner">
-                            <button onClick={() => getEdit(props._id)}>Edit</button>
+                            <button id="edit" onClick={() => getEdit(props._id)}>Edit</button>
                         </div>
                         <div className="inner">
-                            <button onClick={() => getDelete(props._id)}>Delete</button>
+                            <button id="delete" onClick={() => getDelete(props._id)}>Delete</button>
                         </div>
                       </span>
                     : null

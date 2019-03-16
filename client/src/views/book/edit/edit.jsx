@@ -132,7 +132,7 @@ class Edit extends Component {
                     <label htmlFor="description">Description</label>
                     <textarea id="description" onChange={this.handleChange} value={this.state.description}/>
 
-                    <button type="submit">Edit</button>
+                    <button id="edit" type="submit">Edit</button>
                 </form>
             </div>
         );

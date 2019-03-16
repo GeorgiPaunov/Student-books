@@ -97,12 +97,24 @@ module.exports = {
                             throw error;
                         }
 
+                        if (list.studentBooks.indexOf(book._id) > -1) {
+                            const error = new Error("This Student book is already in the list!");
+                            error.statusCode = 403;
+                            throw error;
+                        }
+
                         list.studentBooks.push(book._id);
                         list.save()
                             .then((savedList) => {
                                 res.status(200)
                                     .json({ message: "Item added successfully!", list: savedList });
                             });
+                    })
+                    .catch((error) => {
+                        if (!error.statusCode) {
+                            error.statusCode = 500;
+                        }
+                        next(error);
                     });
             })
             .catch((error) => {
@@ -149,6 +161,12 @@ module.exports = {
                                 res.status(200)
                                     .json({ message: "Item removed successfully!", list: savedList });
                             });
+                    })
+                    .catch((error) => {
+                        if (!error.statusCode) {
+                            error.statusCode = 500;
+                        }
+                        next(error);
                     });
             })
             .catch((error) => {

@@ -209,14 +209,20 @@ class App extends Component {
 
         App.listService.getMyLists(token)
             .then((data) => {
-                if (data.lists.length) {
+                if(data.lists) {
+                    if (data.lists.length) {
+                        this.setState({
+                            usersLists: data.lists,
+                            listsLoading: false
+                        });
+                    } else {
+                        this.setState({
+                            usersLists: [],
+                            listsLoading: false
+                        });
+                    }
+                } else {
                     this.setState({
-                        usersLists: data.lists,
-                        listsLoading: false
-                    });
-                } else if (this.state.usersLists.length > 0) {
-                    this.setState({
-                        usersLists: [],
                         listsLoading: false
                     });
                 }

@@ -26,12 +26,12 @@ class ListSelect extends Component {
         const { lists } = this.props;
 
         return (
-            <select value={this.state.value} onChange={this.handleChange}>
-                <option value="" disabled>Choose a list</option>
-                {
-                    lists.map(list => <option key={list._id} value={list._id}>{list.title}</option>)
-                }
-            </select>
+                <select className="list-select" value={this.state.value} onChange={this.handleChange}>
+                    <option value="" disabled>Choose a list</option>
+                    {
+                        lists.map(list => <option key={list._id} value={list._id}>{list.title}</option>)
+                    }
+                </select>
         );
     }
 

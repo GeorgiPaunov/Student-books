@@ -29,14 +29,13 @@ module.exports = {
             }).then((user) => {
                 res.status(201)
                     .json({message: 'User created!', userId: user._id, username: user.username});
-            })
-                .catch((error) => {
-                    if (!error.statusCode) {
-                        error.statusCode = 500;
-                    }
+            }).catch((error) => {
+                if (!error.statusCode) {
+                    error.statusCode = 500;
+                }
 
-                    next(error);
-                });
+                next(error);
+            });
         }
     },
     login: (req, res, next) => {
